@@ -27,17 +27,18 @@ import org.apache.commons.csv.CSVRecord;
  */
 public class BerlinWasserPortal {
 
-    //private static final String CSV_FILE_PATH = "./CSV/5800312_wasserstand_ew_09_10_2023.csv";
-    //private static final String FROST_OBSERVATIONS = "https://frost.iotlab.com/sensorthings/v1.1/Datastreams(18)/Observations";
+    private static final String LEVEL_CSV_FILE_PATH = "./CSV/5800312_wasserstand_ew_09_10_2023.csv";
+    private static final String LEVEL_FROST_OBSERVATIONS = "https://frost.iotlab.com/sensorthings/v1.1/Datastreams(18)/Observations";
     
-    private static final String CSV_FILE_PATH = "./CSV/5800312_wassertemperatur_ew_09_10_2023.csv";
-    private static final String FROST_OBSERVATIONS = "https://frost.iotlab.com/sensorthings/v1.1/Datastreams(19)/Observations";
+    private static final String TEMP_CSV_FILE_PATH = "./CSV/5800312_wassertemperatur_ew_09_10_2023.csv";
+    private static final String TEMP_FROST_OBSERVATIONS = "https://frost.iotlab.com/sensorthings/v1.1/Datastreams(19)/Observations";
     
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        /*
+        
+        // First part: WATER LEVEL
         // URL to retrieve the CSV file:
         // https://wasserportal.berlin.de/station.php?anzeige=d&station=5800312&sreihe=ew&smode=c&thema=ows&sdatum=09.10.2023&senddatum=27.10.2023
         // Ideally, the dates should be set dynamically: for example, the
@@ -46,7 +47,7 @@ public class BerlinWasserPortal {
         try
         {
             // Read the CSV file
-            reader = Files.newBufferedReader(Paths.get(CSV_FILE_PATH), Charset.forName("windows-1250"));
+            reader = Files.newBufferedReader(Paths.get(LEVEL_CSV_FILE_PATH), Charset.forName("windows-1250"));
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()                                                                  
                 .setDelimiter(';')
                 .setHeader()
@@ -68,24 +69,23 @@ public class BerlinWasserPortal {
                 String payload = SensorThings.prepareData(column1, Integer.valueOf(column2));
                 System.out.println(payload);
                 // Send the data to the FROST server
-                SensorThings.post(BerlinWasserPortal.FROST_OBSERVATIONS, payload);
+                SensorThings.post(BerlinWasserPortal.LEVEL_FROST_OBSERVATIONS, payload);
                 System.out.println("-----");
             }
         }
         catch (IOException ex) {
             Logger.getLogger(BerlinWasserPortal.class.getName()).log(Level.SEVERE, null, ex);
         }
-        */
         
+        // Second part: WATER TEMPERATURE
         // URL to retrieve the CSV file:
         // https://wasserportal.berlin.de/station.php?anzeige=d&station=5800312&sreihe=ew&smode=c&thema=owt&sdatum=09.10.2023&senddatum=27.10.2023
         // Ideally, the dates should be set dynamically: for example, the
         // parameter senddatum could be the date of yesterday.
-        Reader reader;
         try
         {
             // Read the CSV file
-            reader = Files.newBufferedReader(Paths.get(CSV_FILE_PATH), Charset.forName("windows-1250"));
+            reader = Files.newBufferedReader(Paths.get(TEMP_CSV_FILE_PATH), Charset.forName("windows-1250"));
             CSVFormat csvFormat = CSVFormat.DEFAULT.builder()                                                                  
                 .setDelimiter(';')
                 .setHeader()
@@ -108,7 +108,7 @@ public class BerlinWasserPortal {
                 String payload = SensorThings.prepareTemperatureData(column1, Double.valueOf(column2));
                 System.out.println(payload);
                 // Send the data to the FROST server
-                SensorThings.post(BerlinWasserPortal.FROST_OBSERVATIONS, payload);
+                SensorThings.post(BerlinWasserPortal.TEMP_FROST_OBSERVATIONS, payload);
                 System.out.println("-----");
             }
         }
